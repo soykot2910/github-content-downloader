@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="github-folder-downloader",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     install_requires=[
         "requests>=2.25.0",
