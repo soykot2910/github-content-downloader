@@ -1,31 +1,32 @@
-# GitHub Folder Downloader
+# GitHub Content Downloader
 
-A command-line tool to easily download files and folders from GitHub repositories. This tool allows you to download single files or entire directories from any public GitHub repository without needing to clone the entire repository.
+A powerful command-line tool to download files and folders from GitHub repositories. Download any file or entire directory from GitHub repositories without cloning - perfect for selectively downloading specific content.
 
 ## Features
 
 - Download single files from GitHub repositories
 - Download entire folders recursively
-- Simple command-line interface
+- Simple command-line interface (`ghcd`)
 - Support for both file URLs (blob) and folder URLs (tree)
 - Customizable download location
+- No authentication required for public repositories
 
 ## Installation
 
 ### Option 1: Install from PyPI
 
 ```bash
-pip install github-folder-downloader
+pip install github-content-downloader
 ```
 
 ### Option 2: Install from source
 
 ```bash
 # Clone the repository
-git clone https://github.com/soykot2910/github-folder-downloader.git
+git clone https://github.com/soykot2910/github-content-downloader.git
 
 # Navigate to the project directory
-cd github-folder-downloader
+cd github-content-downloader
 
 # Install the package
 pip install .
@@ -37,33 +38,33 @@ pip install .
 
 1. Basic usage:
 ```bash
-github-download <github-url>
+ghcd <github-url>
 ```
 
 2. Download a single file:
 ```bash
-github-download https://github.com/user/repo/blob/master/path/to/file.pdf
+ghcd https://github.com/user/repo/blob/master/path/to/file.pdf
 ```
 
 3. Download an entire folder:
 ```bash
-github-download https://github.com/user/repo/tree/master/docs
+ghcd https://github.com/user/repo/tree/master/docs
 ```
 
 4. Specify custom output directory:
 ```bash
-github-download -o ./my-downloads https://github.com/user/repo/tree/master/docs
+ghcd -o ./my-downloads https://github.com/user/repo/tree/master/docs
 ```
 
 5. Interactive mode (if no URL provided):
 ```bash
-github-download
+ghcd
 ```
 
 ### Command Line Options
 
 ```bash
-github-download --help
+ghcd --help
 ```
 
 Available options:
