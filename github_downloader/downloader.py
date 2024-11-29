@@ -1,7 +1,6 @@
 import requests
 import os
 import re
-from typing import Tuple
 
 def download_file(url: str, dest_folder: str) -> None:
     """Download a single file from GitHub and save it to the destination folder."""
@@ -38,16 +37,33 @@ def download_content(repo: str, path: str, branch: str, dest_folder: str) -> Non
     else:
         print(f"Failed to retrieve contents at: {api_url}")
 
-def parse_github_url(url: str) -> Tuple[str, str, str]:
+def parse_github_url(url: str) -> tuple[str, str, str]:
     """Extract the repository name, branch, and path from a GitHub URL."""
-    match = re.match(r"https://github\.com/([^/]+)/([^/]+)/(tree|blob)/([^/]+)(?:/(.+))?", url)
-    if match:
-        repo = f"{match.group(1)}/{match.group(2)}"
-        branch = match.group(4)
-        path = match.group(5) if match.group(5) else ""
+    # Handle full repository URLs
+    repo_pattern = r"https://github\.com/([^/]+/[^/]+)/?$"
+    # Handle both tree and blob URLs
+    file_pattern = r"https://github\.com/([^/]+/[^/]+)/(tree|blob)/([^/]+)/(.+)"
+    
+    # Try matching full repository URL first
+    repo_match = re.match(repo_pattern, url)
+    if repo_match:
+        repo = repo_match.group(1)
+        return repo, "master", ""  # Default to master branch with empty path
+    
+    # Try matching file/folder pattern
+    file_match = re.match(file_pattern, url)
+    if file_match:
+        repo = file_match.group(1)
+        branch = file_match.group(3)
+        path = file_match.group(4)
         return repo, branch, path
-    else:
-        raise ValueError("Invalid GitHub URL format. Please ensure it follows the pattern: https://github.com/username/repo/(tree|blob)/branch[/path]")
+    
+    raise ValueError(
+        "Invalid GitHub URL format. Please use one of these formats:\n"
+        "- Full repository: https://github.com/username/repo\n"
+        "- Specific folder: https://github.com/username/repo/tree/branch/path\n"
+        "- Single file: https://github.com/username/repo/blob/branch/path"
+    )
 
 def download_from_github(url: str, dest_folder: str = "./downloaded_files") -> None:
     """

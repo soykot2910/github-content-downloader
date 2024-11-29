@@ -6,6 +6,7 @@ A powerful command-line tool to download files and folders from GitHub repositor
 
 - Download single files from GitHub repositories
 - Download entire folders recursively
+- Download complete repositories
 - Simple command-line interface (`ghcd`)
 - Support for both file URLs (blob) and folder URLs (tree)
 - Customizable download location
@@ -36,24 +37,36 @@ pip install .
 
 ### Command Line Interface
 
-1. Basic usage:
+1. Download a complete repository:
 ```bash
-ghcd <github-url>
+ghcd https://github.com/username/repository
+```
+Example:
+```bash
+ghcd https://github.com/tensorflow/tensorflow
 ```
 
-2. Download a single file:
+2. Download a specific folder:
 ```bash
-ghcd https://github.com/user/repo/blob/master/path/to/file.pdf
+ghcd https://github.com/username/repository/tree/branch/folder
+```
+Example:
+```bash
+ghcd https://github.com/tensorflow/tensorflow/tree/master/tensorflow/python
 ```
 
-3. Download an entire folder:
+3. Download a single file:
 ```bash
-ghcd https://github.com/user/repo/tree/master/docs
+ghcd https://github.com/username/repository/blob/branch/path/to/file
+```
+Example:
+```bash
+ghcd https://github.com/tensorflow/tensorflow/blob/master/README.md
 ```
 
 4. Specify custom output directory:
 ```bash
-ghcd -o ./my-downloads https://github.com/user/repo/tree/master/docs
+ghcd -o ./my-downloads <github-url>
 ```
 
 5. Interactive mode (if no URL provided):
@@ -78,45 +91,54 @@ You can also use it as a Python package in your code:
 ```python
 from github_downloader import download_from_github
 
-# Download a single file
+# Download complete repository
+download_from_github("https://github.com/username/repository")
+
+# Download specific folder
 download_from_github(
-    "https://github.com/user/repo/blob/master/file.pdf"
+    "https://github.com/username/repository/tree/master/docs",
+    dest_folder="./my-downloads"
 )
 
-# Download a folder to custom location
+# Download single file
 download_from_github(
-    "https://github.com/user/repo/tree/master/docs",
-    dest_folder="./my-downloads"
+    "https://github.com/username/repository/blob/master/README.md"
 )
 ```
 
 ## URL Format Examples
 
-### For Files
+### 1. Complete Repository
 ```
-https://github.com/username/repository/blob/branch/path/to/file.ext
+https://github.com/username/repository
 ```
-Example:
-```
-https://github.com/tensorflow/tensorflow/blob/master/README.md
-```
+Downloads the entire repository from the default branch (usually 'master' or 'main').
 
-### For Folders
+### 2. Specific Folder
 ```
 https://github.com/username/repository/tree/branch/path/to/folder
 ```
-Example:
+Downloads only the specified folder and its contents.
+
+### 3. Single File
 ```
-https://github.com/tensorflow/tensorflow/tree/master/tensorflow/python
+https://github.com/username/repository/blob/branch/path/to/file
 ```
+Downloads only the specified file.
 
 ## Common Issues and Solutions
 
 1. **Permission Error**: If you get a permission error while downloading, make sure you have write permissions in the output directory.
 
-2. **Invalid URL Format**: Make sure your GitHub URL follows the correct format. It should contain either 'blob' (for files) or 'tree' (for folders).
+2. **Invalid URL Format**: Make sure your GitHub URL follows one of these patterns:
+   - Repository: `https://github.com/username/repo`
+   - Folder: `https://github.com/username/repo/tree/branch/path`
+   - File: `https://github.com/username/repo/blob/branch/path`
 
-3. **Download Failed**: If downloads fail, check your internet connection and verify that the GitHub repository is public and accessible.
+3. **Download Failed**: If downloads fail, check:
+   - Your internet connection
+   - The repository is public and accessible
+   - The URL is correct and the resource exists
 
 ## Requirements
 

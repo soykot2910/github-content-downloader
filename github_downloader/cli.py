@@ -1,9 +1,9 @@
 import argparse
-import sys
+from .downloader import download_from_github
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Download files or folders from GitHub repositories"
+        description="Download files and folders from GitHub repositories"
     )
     parser.add_argument(
         "url",
@@ -21,18 +21,23 @@ def main():
     # If no URL provided, show usage examples and prompt for input
     if not args.url:
         print("\nUsage examples:")
-        print("  github-download https://github.com/user/repo/blob/master/file.pdf")
-        print("  github-download https://github.com/user/repo/tree/master/docs")
-        print("  github-download -o ./custom/path https://github.com/user/repo/tree/master\n")
+        print("  ghcd https://github.com/user/repo/blob/master/file.pdf")
+        print("  ghcd https://github.com/user/repo/tree/master/docs")
+        print("  ghcd https://github.com/user/repo")
+        print("  ghcd -o ./custom/path https://github.com/user/repo/tree/master\n")
         
         args.url = input("Enter the GitHub URL to download: ").strip()
         
         if not args.url:
             parser.print_help()
-            sys.exit(1)
+            return 1
     
-    from .downloader import download_from_github
-    download_from_github(args.url, args.output)
+    try:
+        download_from_github(args.url, args.output)
+        return 0
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1
 
 if __name__ == "__main__":
     main() 
