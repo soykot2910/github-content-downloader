@@ -20,7 +20,12 @@ def download_content(repo: str, path: str, branch: str, dest_folder: str) -> Non
     Recursively download content from a specified GitHub repository path.
     Handles both files and folders within the path.
     """
-    api_url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={branch}"
+    # Construct API URL - handle empty path case
+    api_url = f"https://api.github.com/repos/{repo}/contents"
+    if path:
+        api_url += f"/{path}"
+    api_url += f"?ref={branch}"
+    
     headers = {'Accept': 'application/vnd.github.v3+json'}
     response = requests.get(api_url, headers=headers)
 
@@ -33,9 +38,13 @@ def download_content(repo: str, path: str, branch: str, dest_folder: str) -> Non
                 if item['type'] == 'file':
                     download_file(item['download_url'], dest_folder)
                 elif item['type'] == 'dir':
-                    download_content(repo, item['path'], branch, os.path.join(dest_folder, item['name']))
+                    new_dest = os.path.join(dest_folder, item['name'])
+                    os.makedirs(new_dest, exist_ok=True)
+                    download_content(repo, item['path'], branch, new_dest)
     else:
         print(f"Failed to retrieve contents at: {api_url}")
+        print(f"Status code: {response.status_code}")
+        print(f"Response: {response.text}")
 
 def parse_github_url(url: str) -> tuple[str, str, str]:
     """Extract the repository name, branch, and path from a GitHub URL."""
@@ -47,8 +56,8 @@ def parse_github_url(url: str) -> tuple[str, str, str]:
     # Try matching full repository URL first
     repo_match = re.match(repo_pattern, url)
     if repo_match:
-        repo = repo_match.group(1)
-        return repo, "master", ""  # Default to master branch with empty path
+        repo = repo_match.group(1).rstrip('/')  # Remove trailing slash if present
+        return repo, "main", ""  # Default to 'main' branch instead of 'master'
     
     # Try matching file/folder pattern
     file_match = re.match(file_pattern, url)
